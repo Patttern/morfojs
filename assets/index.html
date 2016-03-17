@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Morfo</title>
+  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-2.2.1.js"></script>
+  <script type="text/javascript" src="js/events.js"></script>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div>
+    <textarea id="data"></textarea>
+  </div>
+  <div>
+    <button id="submit">Отправить</button>
+  </div>
+  <div>
+    <span>Обработано:</span><br>
+    слов: <span id="words">0</span><br>
+    запросов: <span id="count">0</span><br>
+  </div>
+  <div id="progress"><div></div></div><br><br>
+  <h4>Существительные</h4>
+  <div id="container1"></div>
+  <h4>Прилагательные</h4>
+  <div id="container2"></div>
+</body>
+</html>
