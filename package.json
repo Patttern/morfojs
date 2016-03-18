@@ -4,6 +4,7 @@
   "description": "Склонение существительных и прилагательных",
   "author": "patttern@gmail.com",
   "dependencies": {
+    "async": "^1.5.2",
     "express": "^4.13.4",
     "node-libcurl": "^0.8.0",
     "sleep": "^3.0.1",

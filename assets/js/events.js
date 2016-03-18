@@ -16,9 +16,12 @@ $(function () {
     $('#submit').attr('disabled','disabled');
   });
   socket.on('progress', function (req) {
+    console.log('progress', req.percent);
     var prc = parseInt(req.percent, 10) || 0;
-    $('#words').text(req.words);
-    $('#count').text(req.count);
+    $('#wordsCur').text(req.words.current);
+    $('#wordsAll').text(req.words.all);
+    $('#reqCur').text(req.requests.current);
+    $('#reqAll').text(req.requests.all);
     $('#progress div').text(prc + '%').width(prc + '%');
     socket.emit('progressed');
   });
@@ -36,7 +39,6 @@ $(function () {
     $('#submit').removeAttr('disabled');
     console.log(data);
     processing(data);
-    socket.emit('end progress');
   });
 
   function processing (data) {
@@ -49,7 +51,7 @@ $(function () {
       // console.log([word, wdata]);
       var inserted = false;
       // console.log(wdata["Прилагательное"]);
-      if (wdata["Прилагательное"]) {
+      if (wdata && wdata["Прилагательное"]) {
         var rodes = ['Мужской', 'Женский', 'Средний', 'Множественное'];
         for (var rode in rodes) {
           var r = rodes[rode];
@@ -75,7 +77,7 @@ $(function () {
       } else {
         // console.log([wdata['Род'], wdata['Род'].length, word, wdata]);
         var tr = $('<tr/>');
-        if (wdata['Род'].length) {
+        if (wdata && wdata['Род'].length) {
           tr.append($('<td/>').append(word))
             .append($('<td/>').append(wdata['Род']))
             .append($('<td/>').append(wdata[wdata['Род']]['И']))
