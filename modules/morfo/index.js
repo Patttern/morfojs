@@ -26,7 +26,6 @@ var createSessObject = function (clientId, socket) {
     step: 1,
     started: false,
     tasks: {},
-    adjTasks: {},
     socket: socket
   };
 };
@@ -41,6 +40,7 @@ var processing = function (word, cId, isAdj, cb) {
     return function (err, res) {
       // console.log('adj:curl:end', [err, res]);
       sessData[cId].stats.requests.current++;
+      // sessData[cId].stats.words.all += 3;
       if (err) cb(err, null);
       if (res.AdjectiveGenders) {
         var addonTasks = {};
@@ -89,10 +89,12 @@ var processing = function (word, cId, isAdj, cb) {
   }
 };
 
-var createTask = function (word, cId, isAdj) {
+var createTask = function (word, cId, isAdj, isMain) {
   return function (cb) {
+    var isAdject = isAdj || false;
+    var mainTask = isMain || false;
     // console.log('start task', word);
-    var opts = setOptions(word, isAdj);
+    var opts = setOptions(word, isAdject);
     var curl = new Curl();
     var close = curl.close.bind(curl);
     curl.setOpt(Curl.option.URL, opts.url);
@@ -105,8 +107,11 @@ var createTask = function (word, cId, isAdj) {
     }));
 
     curl.on('end', function(statusCode, body, headers) {
-      xmlString(body, processing(word, cId, isAdj, cb));
-      sessData[cId].stats.percent += sessData[cId].step;
+      xmlString(body, processing(word, cId, isAdject, cb));
+      if (mainTask) {
+        sessData[cId].stats.percent += sessData[cId].step;
+        sessData[cId].stats.words.current++;
+      }
       close();
     });
     curl.on('error', curl.close.bind(curl));
@@ -203,7 +208,7 @@ var morfo = function (io) {
         for (var w in listWords) {
           var word = S(listWords[w]).trim().s;
           var isAdj = isAdjective(word);
-          sessData[cId].tasks[word] = createTask(word, cId, isAdj);
+          sessData[cId].tasks[word] = createTask(word, cId, isAdj, true);
         }
         // console.info('start progress');
         socket.emit('progress', sessData[cId].stats);
